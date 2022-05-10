@@ -12,7 +12,7 @@ var x = 10;
 var y = canvas.height - 211;
 var x_oponente1 = canvas.width-500
 var fator_soma = 5;
-var x_tiro=5, y_tiro = y+50, colisao=false;
+var x_tiro=5, y_tiro, colisao=false;
 var fator_somaX = 0;
 var y = canvas.height - 211
 var personagem_direita, personagem_esquerda, pulo, num_pulo;
@@ -76,7 +76,7 @@ function AnimateCenario(){
     
         x_tiro=x_tiro+1 
         y_tiro = y_atirar;
-        if(x_tiro = x_oponente1){
+        if(x_tiro == x_oponente1){
             colisao = true; 
         }
     }
