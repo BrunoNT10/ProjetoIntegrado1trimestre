@@ -6,11 +6,16 @@ var canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+var y_atirar;
+var atirar = false;
 var x = 10;
+var y = canvas.height - 211;
 var x_oponente1 = canvas.width-500
-var fator_soma = 5
+var fator_soma = 5;
+var x_tiro=5, y_tiro = y+50, colisao=false;
 var fator_somaX = 0;
 var y = canvas.height - 211
+var personagem_direita, personagem_esquerda, pulo, num_pulo;
 
 var c = canvas.getContext('2d');
 
@@ -22,200 +27,158 @@ function CriarElementos(){
     c.fillRect(canvas.width-750, canvas.height-300, (canvas.width-50)-(canvas.width-750), 30);
 
     c.fillStyle = 'rgb(100, 100, 100)';
-    c.fillRect(x_oponente1, canvas.height-201, 60, 90);
+    c.fillRect(x_oponente1, canvas.height-201, 90, 90);
 
     c.fillStyle = 'rgb(255, 255, 0)';
     c.fillRect(5, canvas.height-489, (canvas.width-50)-(canvas.width-750), 30);
+
+    c.fillStyle = 'rgb(255, 0, 0)';
+    c.fillRect(x, y, 100,100);
+}
+
+function FatorSoma(){
+    var fator_somaX = 5
+    return fator_somaX;
+}
+
+function Pular(){
+    num_pulo = 1;
+    setTimeout(function(){
+        c.clearRect(0, 0, innerWidth, innerHeight)//(x,y, onde terminax, onde terminay) // Limpa a tela
+        c.fillStyle = 'red'//cor de preenchimento do quadrado
+        c.fillRect(x, y, 100, 100); //serve para falar as dimensões
+        
+        y = y+50;
+        
+    }, 1000)
+        
+    c.clearRect(0, 0, innerWidth, innerHeight)//(x,y, onde terminax, onde terminay) // Limpa a tela
+    CriarElementos()
+    c.fillStyle = 'red'//cor de preenchimento do quadrado
+    c.fillRect(x, y, 100, 100); //serve para falar as dimensões
+    y = y-50
+    if(num_pulo == 1){
+        num_pulo = 0 
+        return       
+    }
 }
 
 function AnimateCenario(){
     c.clearRect(0, 0, innerWidth, innerHeight)
-
+    
     CriarElementos()
     
     requestAnimationFrame(AnimateCenario);
-    c.fillStyle = 'rgb(255, 0, 0)';
-    c.fillRect(x, canvas.height-211, 100,100);
-
-    if(x_oponente1 >= canvas.width - 110){
-        fator_soma = -1;
-    }
-    else if(x_oponente1 <= 10){
-        fator_soma = 1;
-    }
+    if(atirar == true){
+       
+        c.fillStyle = 'rgb(0, 0, 255)';
+        c.fillRect(x_tiro, y_tiro, 20,20);
     
-    x_oponente1 = x_oponente1 + fator_soma;
-    
-}
-
-function AnimateMainCharacter(fator_somaX){
-    // console.log('fator soma 'X)
-    console.log(x_oponente1)
-    c.clearRect(0, 0, innerWidth, innerHeight)
-
-    CriarElementos()
-
-    if(x >= canvas.width - 150){
-        fator_somaX = 0;
+        x_tiro=x_tiro+1 
+        y_tiro = y_atirar;
+        if(x_tiro = x_oponente1){
+            colisao = true; 
+        }
+    }
+    if(colisao == true){
+        console.log('colisao')
     }
     else{
-        fator_somaX = 10;
-    }
-    console.log(fator_somaX)
-    x=x+fator_somaX;
-
-    requestAnimationFrame(AnimateMainCharacter);
-    c.fillStyle = 'rgb(255, 0, 0)';
-    c.fillRect(x, canvas.height-211, 100,100);
-
-    if(x_oponente1 >= canvas.width - 110){
-        fator_soma = -1;
-    }
-    else if(x_oponente1 <= 10){
-        fator_soma = 1;
-    }
-
-    x_oponente1 = x_oponente1 + fator_soma;
-
-    c.fillStyle = 'rgb(100, 100, 100)';
-    c.fillRect(x_oponente1, canvas.height-201, 60, 90);
-    return
+        if(x_oponente1 >= canvas.width - 110){
+            fator_soma = -5;
+        }
+        else if(x_oponente1 <= 10){
+            fator_soma = 5;
+        }
     
-}
-
-function AnimateMainCharacterLeft(fator_somaX){
-    // console.log(x)
-
-    c.clearRect(0, 0, innerWidth, innerHeight)
-
-    CriarElementos()
-
-    if(x <= 10){
-        fator_somaX = 0;
+        x_oponente1 = x_oponente1 + fator_soma;
     }
-    else{
-        fator_somaX = 10;
-    }
-    x=x-fator_somaX;
+    if(personagem_direita == true){
 
-    requestAnimationFrame(AnimateMainCharacterLeft);
-    c.fillStyle = 'rgb(255, 0, 0)';
-    c.fillRect(x, canvas.height-211, 100,100);
-
-    if(x_oponente1 >= canvas.width - 110){
-        fator_soma = 0;
+        c.fillStyle = 'rgb(255, 0, 0)';
+        c.fillRect(x, y, 100,100);
+        x=x+5;
+        y_atirar = y+50     
+        x_tiro=x
+        atirar = false;
     }
-    else if(x_oponente1 <= 10){
-        fator_soma = 1;
+
+    if(personagem_esquerda == true){
+
+        c.fillStyle = 'rgb(255, 0, 0)';
+        c.fillRect(x, y, 100,100);
+        x=x-5;
+        y_atirar = y+50     
+        x_tiro=x
     }
     
-    x_oponente1 = x_oponente1 + fator_soma;
 
-    c.fillStyle = 'rgb(100, 100, 100)';
-    c.fillRect(x_oponente1, canvas.height-201, 60, 90);
-
-    
-}
-function AnimateMainCharacterUp(fator_somaX){
-    // console.log(x)
-
-    c.clearRect(0, 0, innerWidth, innerHeight)
-
-    CriarElementos()
-
-    if(x <= 10){
-        fator_somaX = 0;
+    if(pulo == true){
+        Pular()  
+        y_atirar = y+50     
     }
-    else{
-        fator_somaX = 10;
-    }
-    x=x-fator_somaX;
-    if(y>=canvas.height - 400){
-        y = y-10;
-    }
-    else{
-        y = y+10
-    }
-
-    requestAnimationFrame(AnimateMainCharacterUp);
-    c.fillStyle = 'rgb(255, 0, 0)';
-    c.fillRect(x, y, 100,100);
-
-    if(x_oponente1 >= canvas.width - 110){
-        fator_soma = 0;
-    }
-    else if(x_oponente1 <= 10){
-        fator_soma = 1;
+    else if(pulo == false){
     }
     
-    x_oponente1 = x_oponente1 + fator_soma;
-
-    c.fillStyle = 'rgb(100, 100, 100)';
-    c.fillRect(x_oponente1, canvas.height-201, 60, 90);
-
-    
+       
 }
 
 AnimateCenario()
 
-document.addEventListener('keyup', keyRight, false)
-document.addEventListener('keyup', keySpace, false)
-document.addEventListener('keyup', keyLeft, false)
-document.addEventListener('keyup', keyUp, false)
-document.addEventListener('keyup', keyDown, false)
+document.addEventListener('keydown', keyRight, false)
+document.addEventListener('keyup', keyRightSolta, false)
 
-function moveToRight(){
-    // x_oponente1=canvas.width-500;
-    fator_somaX = 0;
-    AnimateMainCharacter(fator_somaX)
-}
-function moveToLeft(){
-    // x_oponente1=canvas.width-500;
-    fator_somaX = 0;
-    AnimateMainCharacterLeft(fator_somaX)
-}
-function moveToUp(){
-    // x_oponente1=canvas.width-500;
-    fator_somaX = 0;
-    AnimateMainCharacterUp(fator_somaX)
-}
+document.addEventListener('keydown', keySpace, false)
+// document.addEventListener('keyup', keySpaceSolta, false)
+
+document.addEventListener('keydown', keyLeft, false)
+document.addEventListener('keyup', keyLeftSolta, false)
+
+document.addEventListener('keydown', keyUp, false)
+document.addEventListener('keyup', keyUpSolta, false)
+
 function keyRight(e){
     if (e.keyCode == 39) {
-        moveToRight()
-    }else if (e.keyCode == 37) {
-        moveToLeft()
+        personagem_direita = true;
+    }
+}
+function keyRightSolta(e){
+    if (e.keyCode == 39) {
+        personagem_direita = false;
+    }
+}
+function keyLeft(e){
+    if (e.keyCode == 37) {
+        personagem_esquerda = true;
+
     }
     
 }
-function keyLeft(e){
-    if (e.keyCode == 39) {
-        moveToRight()
-    }else if (e.keyCode == 37) {
-        moveToLeft()
+function keyLeftSolta(e){
+    if (e.keyCode == 37) {
+        personagem_esquerda = false;
     }
     
 }
 function keyUp(e){
     if (e.keyCode == 38) {
-        moveToUp()
-    }else if (e.keyCode == 40) {
-        moveToDown()
+        pulo = true;
     }
-    
+
 }
-function keyDown(e){
+function keyUpSolta(e){
     if (e.keyCode == 38) {
-        moveToUp()
-    }else if (e.keyCode == 40) {
-        moveToDown()
+        pulo = false;
     }
-    
+
 }
 function keySpace(e){
     if (e.keyCode == 32) {
-        console.log('Espaço pressionado')
-        Atirar()
-        
+        atirar = true;
+    }
+    else{
+        atirar = false;
     }
 }
+
 
