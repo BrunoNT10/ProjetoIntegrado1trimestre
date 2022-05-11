@@ -6,20 +6,36 @@ var canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+var posicao_oponente;
+
+for(var i=0; i<9; i++){
+    console.log('for')
+    posicao = canvas.width - (500 + i)
+    if(posicao % 5 == 0){
+        console.log('teste')
+        posicao_oponente = 500 + i
+        break
+    }
+}
+
 var y_atirar;
 var atirar = false;
 var x = 10;
 var y = canvas.height - 211;
-var x_oponente1 = canvas.width-506
+var x_oponente1 = canvas.width - posicao_oponente, x_oponente2 = 150;
 var fator_soma = 5;
-var x_tiro=5, y_tiro, colisao=false, cor_tiro = 'rgb(0, 0, 255)';
+var x_tiro=5, y_tiro, colisao=false, cor_tiro = 'rgb(0, 0, 255)', x_atirar;
 var fator_somaX = 0;
 var y = canvas.height - 211
 var personagem_direita, personagem_esquerda, pulo, num_pulo;
 var cor_oponente1 = 'rgb(100, 100, 100)';
-var plataforma;
+var plataforma = false;
 var x_porta = canvas.width-550;
 var cor_porta = "rgb(255, 255, 255)", porta_aberta=false;
+var borda1 = 5, borda2 = canvas.width - 300
+var colisao_oponente, colisao_tiro2
+var cor_oponente2 = 'rgb(100, 100, 100)', oponente2_derrotado = false;
+var x_bigboss = 10, y_bigboss = canvas.height-700, luta_bigboss
 
 var c = canvas.getContext('2d');
 
@@ -28,17 +44,18 @@ function CriarElementos(){
     c.fillRect(5, canvas.height-111, canvas.width - 50, 30);
 
     c.fillStyle = 'rgb(255, 255, 0)';
-    c.fillRect(5, canvas.height-300, (canvas.width-50), 30);
+    c.fillRect(5, canvas.height-500, (canvas.width-50), 30);
 
     //Porta metal
     c.fillStyle = cor_porta;
-    c.fillRect(x_porta, canvas.height-300, canvas.width-1100, 30);
+    c.fillRect(x_porta, canvas.height-500, canvas.width-1100, 30);
     
     c.fillStyle = cor_oponente1;
     c.fillRect(x_oponente1, canvas.height-201, 90, 90);
 
-    // c.fillStyle = 'rgb(255, 255, 0)';
-    // c.fillRect(5, canvas.height-489, (canvas.width-50)-(canvas.width-750), 30);
+    //Big Boss
+    c.fillStyle = 'rgb(0, 255, 100)';
+    c.fillRect(x_bigboss, y_bigboss, 200, 200);
 
     c.fillStyle = 'rgb(255, 0, 0)';
     c.fillRect(x, y, 100,100);
@@ -50,17 +67,31 @@ function FatorSoma(){
 }
 
 function Pular(){
-    if(x >= canvas.width - 650 && x <= canvas.width - 360){
-        y = canvas.height-400
+    if(x >= canvas.width - 650 && x <= canvas.width - 360 && plataforma == false){
+        y = canvas.height-600
         plataforma = true;
-    }
+    }  
     else{
         y = canvas.height-400
         setTimeout(function(){
             y = canvas.height-211
 
-        },250)
-    }    
+        },500)
+    } 
+    if(plataforma == true){
+        y = canvas.height - 800
+        setTimeout(function(){
+            y = canvas.height - 600
+        }, 500)
+    }
+}
+
+function CriarNitanerBigBoss(){
+    c.fillStyle = cor_oponente2;
+    c.fillRect(x_oponente2, canvas.height-590, 90, 90);
+
+    x_oponente2 = x_oponente2 + 5
+    
 }
 
 function AnimateCenario(){
@@ -69,16 +100,68 @@ function AnimateCenario(){
     CriarElementos()
     
     requestAnimationFrame(AnimateCenario);
-    if(atirar == true){
+
+    if(atirar == true && plataforma == false){
        
         c.fillStyle = cor_tiro;
         c.fillRect(x_tiro, y_tiro, 20,20);
-    
-        x_tiro=x_tiro+5 
+        console.log(x_tiro, x_oponente1)
+
+        x_tiro=x_tiro+25 
         y_tiro = y_atirar;
-        if(x_tiro == x_oponente1 || x_tiro == x_oponente1 - 5 || x_tiro == x_oponente1 + 5){
+        if(x_tiro == x_oponente1 || x_tiro == x_oponente1 - 5 || x_tiro == x_oponente1 + 5 || x_tiro == x_oponente1 - 10 || x_tiro == x_oponente1 + 10|| x_tiro == x_oponente1 - 15 || x_tiro == x_oponente1 + 15 || x_tiro == x_oponente1 - 20 || x_tiro == x_oponente1 + 20 || x_tiro == x_oponente1 - 25 || x_tiro == x_oponente1 + 25){
             colisao = true; 
+            x_tiro = x
+            atirar = false
         }
+        
+    }
+    else if(atirar == true && plataforma == true){
+        c.fillStyle = cor_tiro;
+        c.fillRect(x_tiro, y_tiro, 20,20);
+        console.log(x_tiro, x_oponente1)
+    
+        x_tiro=x_tiro-25
+        y_tiro = y_atirar;
+        if(x_tiro == x_oponente2 || x_tiro == x_oponente2 - 5 || x_tiro == x_oponente2 + 5 || x_tiro == x_oponente2 - 10 || x_tiro == x_oponente2 + 10|| x_tiro == x_oponente2 - 15 || x_tiro == x_oponente2 + 15 || x_tiro == x_oponente2 - 20 || x_tiro == x_oponente2 + 20 || x_tiro == x_oponente2 - 25 || x_tiro == x_oponente2 + 25){
+            colisao_tiro2 = true; 
+            x_tiro = x
+            atirar = false
+        }
+    }
+    if(colisao_tiro2 == true){
+        cor_oponente2 = 'rgb(100, 150, 100)';
+        oponente2_derrotado = true;
+
+    }
+    if(x_oponente2 >= canvas.width - 110 || colisao_tiro2 == true){
+        luta_bigboss = true
+    }
+    if(luta_bigboss == true){
+        setTimeout(function(){
+            x_bigboss = x_bigboss + 5;
+
+        }, 2000)
+    }
+    if(oponente2_derrotado == false && plataforma==true){
+        console.log('personagem não derrotado')
+        if((x == x_oponente2 || x == x_oponente2 - 5 || x == x_oponente2 + 5) && y == canvas.height-600){
+            console.log('colisão oponente')
+            colisao_oponente = true
+            personagem_direita = false
+            personagem_esquerda = false
+        }
+    }
+    if((x == x_oponente1 || x == x_oponente1 - 5 || x == x_oponente1 + 5) && y == canvas.height - 211){
+        colisao_oponente = true
+        personagem_direita = false
+        personagem_esquerda = false
+        x = 5
+        x_oponente1 = canvas.width - posicao_oponente
+    }
+    if(colisao_oponente == true){
+        alert('Perdeu uma vida')
+        colisao_oponente = false
     }
     if(plataforma == true && y == canvas.height - 400 && x <= canvas.width - (canvas.width - 5)){
         y = canvas.height - 211;
@@ -86,16 +169,21 @@ function AnimateCenario(){
     }
     if(plataforma == true){
         cor_porta = 'rgb(100, 100, 100)'
+        y_atirar = canvas.height - 550
+        CriarNitanerBigBoss()
+    }
+    else if(plataforma == false){
+        y_atirar = canvas.height - 161
     }
     
     if(colisao == true){
         cor_oponente1 = 'rgb(150, 255, 150)'
-        x_oponente1 = x_oponente1 + 30
-
-        x_porta = canvas.width - 550
-     
-        // cor_tiro = 'rgb(255, 255, 255)'
+        x_oponente1 = x_oponente1
+        setTimeout(function(){
+            x_oponente1 = x_oponente1 + 10
+        }, 500)
         
+        x_porta = canvas.width - 550   
     }
     else{
         colisao = false
@@ -114,29 +202,19 @@ function AnimateCenario(){
         c.fillStyle = 'rgb(255, 0, 0)';
         c.fillRect(x, y, 100,100);
         x=x+5;
-        y_atirar = y+50     
         x_tiro=x
-        atirar = false;
     }
 
     if(personagem_esquerda == true){
-
         c.fillStyle = 'rgb(255, 0, 0)';
         c.fillRect(x, y, 100,100);
-        x=x-5;
-        y_atirar = y+50     
-        x_tiro=x
+        x=x-5;    
+        x_tiro = x
     }
-    
-
     if(pulo == true){
         Pular()  
         y_atirar = y+50     
     }
-    else if(pulo == false){
-    }
-    
-       
 }
 
 AnimateCenario()
