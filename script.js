@@ -10,12 +10,16 @@ var y_atirar;
 var atirar = false;
 var x = 10;
 var y = canvas.height - 211;
-var x_oponente1 = canvas.width-500
+var x_oponente1 = canvas.width-506
 var fator_soma = 5;
-var x_tiro=5, y_tiro, colisao=false;
+var x_tiro=5, y_tiro, colisao=false, cor_tiro = 'rgb(0, 0, 255)';
 var fator_somaX = 0;
 var y = canvas.height - 211
 var personagem_direita, personagem_esquerda, pulo, num_pulo;
+var cor_oponente1 = 'rgb(100, 100, 100)';
+var plataforma;
+var x_porta = canvas.width-550;
+var cor_porta = "rgb(255, 255, 255)", porta_aberta=false;
 
 var c = canvas.getContext('2d');
 
@@ -24,13 +28,17 @@ function CriarElementos(){
     c.fillRect(5, canvas.height-111, canvas.width - 50, 30);
 
     c.fillStyle = 'rgb(255, 255, 0)';
-    c.fillRect(canvas.width-750, canvas.height-300, (canvas.width-50)-(canvas.width-750), 30);
+    c.fillRect(5, canvas.height-300, (canvas.width-50), 30);
 
-    c.fillStyle = 'rgb(100, 100, 100)';
+    //Porta metal
+    c.fillStyle = cor_porta;
+    c.fillRect(x_porta, canvas.height-300, canvas.width-1100, 30);
+    
+    c.fillStyle = cor_oponente1;
     c.fillRect(x_oponente1, canvas.height-201, 90, 90);
 
-    c.fillStyle = 'rgb(255, 255, 0)';
-    c.fillRect(5, canvas.height-489, (canvas.width-50)-(canvas.width-750), 30);
+    // c.fillStyle = 'rgb(255, 255, 0)';
+    // c.fillRect(5, canvas.height-489, (canvas.width-50)-(canvas.width-750), 30);
 
     c.fillStyle = 'rgb(255, 0, 0)';
     c.fillRect(x, y, 100,100);
@@ -42,25 +50,17 @@ function FatorSoma(){
 }
 
 function Pular(){
-    num_pulo = 1;
-    setTimeout(function(){
-        c.clearRect(0, 0, innerWidth, innerHeight)//(x,y, onde terminax, onde terminay) // Limpa a tela
-        c.fillStyle = 'red'//cor de preenchimento do quadrado
-        c.fillRect(x, y, 100, 100); //serve para falar as dimensões
-        
-        y = y+50;
-        
-    }, 1000)
-        
-    c.clearRect(0, 0, innerWidth, innerHeight)//(x,y, onde terminax, onde terminay) // Limpa a tela
-    CriarElementos()
-    c.fillStyle = 'red'//cor de preenchimento do quadrado
-    c.fillRect(x, y, 100, 100); //serve para falar as dimensões
-    y = y-50
-    if(num_pulo == 1){
-        num_pulo = 0 
-        return       
+    if(x >= canvas.width - 650 && x <= canvas.width - 360){
+        y = canvas.height-400
+        plataforma = true;
     }
+    else{
+        y = canvas.height-400
+        setTimeout(function(){
+            y = canvas.height-211
+
+        },250)
+    }    
 }
 
 function AnimateCenario(){
@@ -71,19 +71,34 @@ function AnimateCenario(){
     requestAnimationFrame(AnimateCenario);
     if(atirar == true){
        
-        c.fillStyle = 'rgb(0, 0, 255)';
+        c.fillStyle = cor_tiro;
         c.fillRect(x_tiro, y_tiro, 20,20);
     
-        x_tiro=x_tiro+1 
+        x_tiro=x_tiro+5 
         y_tiro = y_atirar;
-        if(x_tiro == x_oponente1){
+        if(x_tiro == x_oponente1 || x_tiro == x_oponente1 - 5 || x_tiro == x_oponente1 + 5){
             colisao = true; 
         }
     }
+    if(plataforma == true && y == canvas.height - 400 && x <= canvas.width - (canvas.width - 5)){
+        y = canvas.height - 211;
+        plataforma = false
+    }
+    if(plataforma == true){
+        cor_porta = 'rgb(100, 100, 100)'
+    }
+    
     if(colisao == true){
-        console.log('colisao')
+        cor_oponente1 = 'rgb(150, 255, 150)'
+        x_oponente1 = x_oponente1 + 30
+
+        x_porta = canvas.width - 550
+     
+        // cor_tiro = 'rgb(255, 255, 255)'
+        
     }
     else{
+        colisao = false
         if(x_oponente1 >= canvas.width - 110){
             fator_soma = -5;
         }
@@ -92,6 +107,7 @@ function AnimateCenario(){
         }
     
         x_oponente1 = x_oponente1 + fator_soma;
+        // cor_tiro = 'rgb(0, 0, 255)'
     }
     if(personagem_direita == true){
 
