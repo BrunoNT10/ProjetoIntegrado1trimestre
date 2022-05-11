@@ -1,0 +1,20 @@
+.botao_menu{
+    width: 200px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 30px;
+    color: white;
+    background-color: transparent;
+}
+.posicao_botoes{
+    text-align:center;
+    margin-top:10%;
+}
+h1{
+    margin-top: 5%;
+    text-align:center;
+    color:white;
+}
+body{
+    background-color: black;
+}
